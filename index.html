@@ -1,30 +1,528 @@
-<html>
-    <head>
-        <title>  
-            Zakaria
-        </title>
-        <style>
-        h1 {
-            text-align: center;
-        }
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> الضناوي | eldannawi</title>
+  
+  <link href="https://unpkg.com/swiper@11/swiper-bundle.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+   <style>
+ 
+@font-face {
+    font-family: 'ThmanyahSans';
+    src: url('thmanyahseriftext-Black.otf');
+    font-weight: 300;
+    font-style: normal;
+}
+body {
+    font-family: 'ThmanyahSans', sans-serif;
+    background: var(--bg2); 
+    color: var(--text);
+    overflow: hidden; 
+    transition: background 0.5s, color 0.5s;
+}
+    /* ===== ألوان ===== */
+    :root {
+      --bg: #0a0000; --bg2: #000; --text: #fff; --text2: #aaa; --text3: #999; --text4: #ccc;
+      --card-bg: rgba(255,255,255,0.03); --card-border: rgba(255,255,255,0.06);
+      --header-bg: rgba(10,0,0,0.95); --header-border: rgba(200,50,50,0.15);
+      --input-bg: #111; --input-border: rgba(255,255,255,0.08);
+      --red: #ff4444; --red-dark: #cc3333; --red-light: #ee4444;
+      --toolbar-bg: #1a1a1a; --star-color: #ff4444; --swiper-bullet: #555;
+    }
 
-        p {
-            text-align: center;
-        }
-        </style>
+    body.light {
+      --bg: #f5f0eb; --bg2: #ede7e0; --text: #1a1a1a; --text2: #555; --text3: #666; --text4: #444;
+      --card-bg: rgba(0,0,0,0.02); --card-border: rgba(0,0,0,0.08);
+      --header-bg: rgba(245,240,235,0.95); --header-border: rgba(200,50,50,0.2);
+      --input-bg: #fff; --input-border: rgba(0,0,0,0.1);
+      --red: #cc3333; --red-dark: #aa2222; --red-light: #dd4444;
+      --toolbar-bg: #e0d8d0;
+       --star-color: #cc3333;
+        --swiper-bullet: #aaa;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    .fixed-container { width: 100%; height: 100vh; overflow: hidden; position: relative; background: var(--bg); }
+    .fixed-container::before { content: ''; position: absolute; top: -200px; right: -150px; width: 650px; height: 650px; border-radius: 50%; background: radial-gradient(circle, rgba(220,40,40,0.5) 0%, rgba(180,25,25,0.2) 40%, transparent 70%); filter: blur(2px); z-index: 0; }
+    .fixed-container::after { content: ''; position: absolute; bottom: -150px; left: -100px; width: 450px; height: 450px; border-radius: 50%; background: radial-gradient(circle, rgba(160,35,35,0.3) 0%, rgba(120,15,15,0.1) 50%, transparent 75%); filter: blur(3px); z-index: 0; }
+
+    .scroll-wrapper { position: relative; z-index: 1; height: 100%; overflow-y: auto; overflow-x: hidden; }
+    .scroll-wrapper::-webkit-scrollbar { width: 3px; }
+    .scroll-wrapper::-webkit-scrollbar-track { background: transparent; }
+    .scroll-wrapper::-webkit-scrollbar-thumb { background: rgba(200,50,50,0.5); border-radius: 10px; }
+
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 1.2rem; }
+
+    /* ===== Header ===== */
+    .header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1rem 0; transition: 0.4s; }
+    .header.scrolled { background: var(--header-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--header-border); }
+    
+    .nav { display: flex; justify-content: space-between; align-items: center; }
+    .logo-text { font-family: 'IBM Plex Sans Arabic'; font-weight: 900; font-size: 1.3rem; color: var(--text); text-decoration: none; }
+    .nav-list { display: flex; gap: 1.5rem; list-style: none; align-items: center; }
+    .nav-list a { font-family: 'ThmanyahSans'; font-weight: 500; color: var(--text4); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+    .nav-list a:hover { color: var(--red); }
+
+    /* زر الوضع */
+    .theme-btn {
+      background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
+      color: var(--text); font-size: 1.1rem; cursor: pointer; width: 38px; height: 38px;
+      border-radius: 50%; transition: 0.3s; display: flex; align-items: center; justify-content: center;
+    }
+    .theme-btn:hover { border-color: var(--red); color: var(--red); background: rgba(255,255,255,0.1); }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; z-index: 1001; }
+    .hamburger span { width: 24px; height: 2px; background: var(--text); display: block; transition: 0.3s; }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(4px,4px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(4px,-4px); }
+
+    /* ===== Hero ===== */
+    .hero { min-height: 100vh; display: flex; align-items: center; padding-top: 3rem; }
+    .hero-content { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+    .hero-greeting { font-weight: 400; font-size: 1rem; color: var(--red); margin-bottom: 0.3rem; }
+    .hero-name { font-family: 'ThmanyahSerifDisplay'; font-weight: 900; font-size: 4rem; line-height: 1.1; margin-bottom: 1rem; }
+    .hero-desc { font-weight: 400; font-size: 0.95rem; color: var(--text2); line-height: 1.7; margin-bottom: 1.8rem; max-width: 420px; }
+    .hero-btns { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .hero-img { width: 260px; height: 260px; border-radius: 50%; overflow: hidden; border: 3px solid rgba(255,68,68,0.4); box-shadow: 0 0 50px rgba(255,68,68,0.2); margin: 0 auto; }
+    .hero-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    .btn { display: inline-block; padding: 0.7rem 1.8rem; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: 0.3s; cursor: pointer; border: none; font-family: 'ThmanyahSans'; }
+    .btn-primary { background: var(--red-dark); color: #fff; }
+    .btn-primary:hover { background: var(--red-light); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,68,68,0.35); }
+    .btn-outline { border: 2px solid var(--card-border); color: var(--text); background: transparent; }
+    .btn-outline:hover { border-color: var(--red); color: var(--red); }
+    .btn-download { background: transparent; border: 2px solid var(--red); color: var(--red); font-size: 0.8rem; padding: 0.5rem 1.2rem; }
+    .btn-download:hover { background: var(--red); color: #fff; transform: translateY(-2px); }
+    .btn-disabled { background: transparent; border: 2px solid var(--text2); color: var(--text2); cursor: not-allowed; opacity: 0.4; }
+    .btn-disabled:hover { transform: none; background: transparent; color: var(--text2); }
+
+    .scroll-down { text-align: center; margin-top: 2rem; }
+    .scroll-down a { display: inline-block; color: var(--red); font-size: 2rem; animation: bounce 1.5s infinite; text-decoration: none; }
+    @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(15px); } }
+
+    /* ===== Sections ===== */
+    section { padding: 5rem 0; }
+    .section-title { font-family: 'ThmanyahSerifDisplay'; font-weight: 700; font-size: 2rem; text-align: center; margin-bottom: 2.5rem; }
+    .reveal { opacity: 0; transform: translateY(40px); transition: all 0.6s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ===== Services ===== */
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+    .service-card { background: var(--card-bg); backdrop-filter: blur(8px); border: 1px solid var(--card-border); border-radius: 16px; padding: 2rem 1.2rem; text-align: center; transition: 0.3s; }
+    .service-card:hover { transform: translateY(-6px); border-color: var(--red); background: rgba(255,255,255,0.05); }
+    .service-icon { font-size: 2.2rem; color: var(--red); margin-bottom: 0.8rem; }
+    .service-card h3 { font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; }
+    .service-card p { font-weight: 400; font-size: 0.8rem; color: var(--text3); line-height: 1.6; }
+
+    /* ===== Stats ===== */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin-bottom: 3rem; }
+    .stat-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 1.8rem 1rem; text-align: center; backdrop-filter: blur(5px); }
+    .stat-number { font-family: 'ThmanyahSerifDisplay'; font-weight: 900; font-size: 2.2rem; color: var(--red); display: block; margin-bottom: 0.3rem; }
+    .stat-label { font-weight: 400; font-size: 0.8rem; color: var(--text2); }
+
+    /* ===== Tools ===== */
+    .tools-grid { max-width: 450px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; }
+    .tool-info { display: flex; justify-content: space-between; margin-bottom: 0.4rem; font-weight: 500; font-size: 0.85rem; color: var(--text4); }
+    .tool-bar { height: 5px; background: var(--toolbar-bg); border-radius: 10px; overflow: hidden; }
+    .tool-fill { height: 100%; background: var(--red-dark); border-radius: 10px; width: 0%; transition: width 1.5s ease-out; }
+
+    /* ===== Portfolio ===== */
+    .portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .portfolio-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden; transition: 0.3s; text-align: center; }
+    .portfolio-item:hover { transform: translateY(-6px); border-color: var(--red); }
+    .portfolio-img {
+  position: relative;
+  aspect-ratio: 1; 
+  overflow: hidden; 
+  width: 100%;
+  height: 100%;
+   /* تغطي المساحة بدون تشويه */
+
+  }
+    .portfolio-img img { 
+      width: 100%; 
+     height: 100%;
+     object-fit: cover; 
+     transition: 0.4s; 
+     }
+    .portfolio-item:hover .portfolio-img img { transform: scale(1.05); }
+    .portfolio-info { padding: 1.2rem 1rem; }
+    .portfolio-info h4 { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.8rem; }
+    .coming-soon .portfolio-img img { filter: blur(6px) brightness(0.4); }
+    .coming-soon-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: #fff; font-family: 'ThmanyahSerifDisplay'; font-weight: 900; font-size: 1.5rem; text-shadow: 0 0 20px rgba(0,0,0,0.8); z-index: 2; }
+
+    /* ===== Testimonials ===== */
+    .testimonial-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 2rem; text-align: center; min-height: 200px; display: flex; flex-direction: column; justify-content: center; }
+    .stars { color: var(--star-color); font-size: 1rem; margin-bottom: 0.8rem; }
+    .testimonial-card p { font-family: 'ThmanyahSerifText'; font-weight: 400; font-size: 0.9rem; color: var(--text2); line-height: 1.8; margin-bottom: 1.2rem; }
+    .testimonial-author strong { font-weight: 700; display: block; margin-bottom: 0.2rem; font-size: 0.95rem; }
+    .testimonial-author span { font-weight: 400; font-size: 0.75rem; color: var(--text3); }
+
+    /* ===== Channels (قنواتنا) ===== */
+    .main-channel-card {
+      display: inline-flex; align-items: center; gap: 0.8rem;
+      background: var(--red-dark); color: #fff; padding: 1rem 2rem;
+      border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 1.1rem;
+      transition: 0.3s; border: 2px solid transparent;
+    }
+    .main-channel-card:hover { background: var(--red-light); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,68,68,0.3); }
+    .main-channel-icon { font-size: 1.4rem; }
+    /* ===== Visitor Counter Style ===== */
+.visitor-counter {
+  display: flex;
+align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 50px;
+  padding: 5px 15px 5px 18px;
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+  direction: ltr;
+}
+
+.visitor-counter i {
+  color: var(--red);
+  font-size: 0.9rem;
+}
+
+.visitor-counter span {
+  font-family: 'ThmanyahSerifDisplay';
+  font-weight: 700;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.visitor-counter .count {
+  font-family: 'ThmanyahSerifDisplay';
+  font-weight: 900;
+  color: var(--red);
+  font-size: 1rem;
+  margin-right: 4px;
+  direction: ltr;
+  display: inline-block;
+  min-width: 45px;
+  text-align: center;
+}
+
+.visitor-counter:hover {
+  border-color: var(--red);
+  transform: translateY(-2px);
+}
+
+    .channel-card {
+      display: flex; align-items: center; gap: 0.8rem;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 14px; padding: 1.2rem 1.5rem; text-decoration: none;
+      color: var(--text); font-weight: 500; font-size: 0.95rem;
+      transition: 0.3s; justify-content: center;
+    }
+    .channel-card:hover { border-color: var(--red); color: var(--red); transform: translateY(-3px); }
+    .channel-card i { color: var(--red); font-size: 1.2rem; }
+
+    /* ===== Contact ===== */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+    .contact-grid h3 { font-family: 'ThmanyahSerifDisplay'; font-weight: 700; font-size: 1.3rem; margin-bottom: 1.2rem; }
+    .social-link { display: flex; align-items: center; gap: 0.8rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 0.9rem 1.2rem; text-decoration: none; color: var(--text4); transition: 0.3s; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.6rem; }
+    .social-link:hover { border-color: var(--red); color: var(--red); }
+    .contact-form input, .contact-form textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 8px; padding: 0.8rem; color: var(--text); font-family: 'ThmanyahSans'; outline: none; margin-bottom: 0.8rem; transition: 0.3s; font-size: 0.9rem; }
+    .contact-form input:focus, .contact-form textarea:focus { border-color: var(--red); }
+    .direct-link { display: flex; align-items: center; gap: 0.5rem; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 8px; padding: 0.6rem 1rem; text-decoration: none; color: var(--text4); font-weight: 500; font-size: 0.8rem; margin-top: 0.5rem; transition: 0.3s; }
+    .direct-link:hover { border-color: var(--red); }
+
+    #step2, #step3 { display: none; }
+    .preview-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 1.2rem; margin: 1rem 0; }
+    .preview-box p { margin-bottom: 0.5rem; font-size: 0.9rem; }
+    .btn-group { display: flex; gap: 0.8rem; margin-top: 1rem; }
+    .btn-secondary { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text); }
+    .btn-secondary:hover { border-color: var(--red); }
+
+    footer { padding: 1.5rem 0; border-top: 1px solid var(--card-border); text-align: center; }
+    footer p { font-weight: 300; font-size: 0.8rem; color: var(--text3); }
+
+    .swiper-pagination-bullet { background: var(--swiper-bullet); opacity: 1; }
+    .swiper-pagination-bullet-active { background: var(--red); }
+
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .nav-list { position: fixed; top: 0; right: -100%; width: 65%; height: 100vh; background: var(--header-bg); backdrop-filter: blur(15px); flex-direction: column; justify-content: center; align-items: center; gap: 2rem; transition: 0.4s; border-left: 1px solid var(--red); }
+      .nav-list.active { right: 0; }
+      .hero-content { grid-template-columns: 1fr; text-align: center; }
+      .hero-name { font-size: 3rem; }
+      .hero-desc { max-width: 100%; margin: 0 auto 1.8rem; }
+      .hero-img { width: 180px; height: 180px; }
+      .hero-btns { justify-content: center; }
+      .services-grid, .portfolio-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    
+}
+ .no {
+     text-align: center;
+ }
+  </style>
+</head>
+<body>
+
+<div class="fixed-container">
+<div class="scroll-wrapper" id="scrollWrapper">
+
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="#" class="logo-text">الضناوي  </a>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <ul class="nav-list" id="navList">
+            <li><a href="#home">الرئيسية</a></li>
+            <li><a href="#services">الخدمات</a></li>
+            <li><a href="#stats">الإحصائيات</a></li>
+            <li><a href="#tools">الأدوات</a></li>
+            <li><a href="#portfolio">أعمالي</a></li>
+            <li><a href="#testimonials">التقييمات</a></li>
+            <li><a href="#contact">تواصل</a></li>
+          </ul>
+          <button class="theme-btn" id="themeToggle" title="تغيير الوضع"><i class="fa-solid fa-moon"></i></button>
+          <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="home">
+    <div class="container">
+      <div class="hero-content">
+        <div>
+          <p class="hero-greeting">السلام عليكم، أنا</p>
+          <h1 class="hero-name"> الضناويّ</h1>
+          <p class="hero-desc">مبرمج مواقع ويب وبوتات ومصمم فيديوهات
+              وخطاط ديواني ثلث 
+          </p>
+          <div class="hero-btns">
+            <a href="#services" class="btn btn-primary">خدماتي</a>
+            <a href="#contact" class="btn btn-outline">تواصل معي</a>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-down">
+        <a href="#services"><i class="fa-solid fa-chevron-down"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services">
+    <div class="container">
+      <h2 class="section-title reveal">الخدمات</h2>
+      <div class="services-grid">
+        <div class="service-card reveal"><i class="fa-solid fa-code service-icon"></i><h3>تطوير مواقع ويب</h3><p>تصميم وتطوير مواقع احترافية متجاوبة مع جميع الأجهزة بأحدث التقنيات</p></div>
         
-    </head>
-   
-    <body>
+        <div class="service-card reveal"><i class="fa-solid fa-mobile-screen service-icon"></i><h3>تطبيقات ويب</h3><p>بناء تطبيقات ويب تفاعلية باستخدام React و JavaScript</p></div>
+      
+        <div class="service-card reveal"><i class="fa-solid fa-server service-icon"></i><h3>استضافة ونشر</h3><p>نشر المواقع على الإنترنت وربطها بالنطاقات الخاصة</p></div>
+        <div class="service-card reveal"><i class="fa-solid fa-headset service-icon"></i><h3>دعم فني</h3><p>دعم فني مستمر وتحديثات دورية للمواقع </p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section id="stats">
+    <div class="container">
+      <h2 class="section-title reveal">الإحصائيات</h2>
+      <div class="stats-grid">
+        <div class="stat-card reveal"><span class="stat-number">+2</span><span class="stat-label">سنوات خبرة</span></div>
         
-        <h1>   
-            الصلاة!!
-        </h1>
+        <div class="stat-card reveal"><span class="stat-number">+97%</span><span class="stat-label">تسليم بالموعد</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools -->
+  <section id="tools">
+    <div class="container">
+      <h2 class="section-title reveal">الأدوات التي أستخدمها</h2>
+      <div class="tools-grid reveal">
+        <div><div class="tool-info"><span>HTML & CSS</span><span>95%</span></div><div class="tool-bar"><div class="tool-fill" data-width="95%"></div></div></div>
+        <div><div class="tool-info"><span>JavaScript</span><span>85%</span></div><div class="tool-bar"><div class="tool-fill" data-width="85%"></div></div></div>
+        <div><div class="tool-info"><span>Python</span><span>75%</span></div><div class="tool-bar"><div class="tool-fill" data-width="75%"></div></div></div>
+        <div><div class="tool-info"><span>React</span><span>60%</span></div><div class="tool-bar"><div class="tool-fill" data-width="60%"></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio - أعمالي -->
+  <section id="portfolio">
+    <div class="container">
+      <h2 class="section-title reveal">أعمالي</h2>
+      
           
-             <p>
-               مواقيت الصلاة
-              </p>
-              
-              
-     </body>
+        <div class="portfolio-item reveal">
+          <div class="portfolio-img"><img src="عمل١.png" alt"مخطوطة"> </img>
+         </div>
+          </section>
+
+  <!-- Testimonials -->
+<section id="testimonials">
+  <div class="container">
+    <h2 class="section-title reveal">آراء العملاء</h2>
+    <div class="swiper reveal" id="testimonialSwiper">
+      <div class="swiper-wrapper">
+        
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="stars">
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <p>هيثم الضناوي ملك الإبداااع أعماله شيء لا يوصف !</p>
+            <div class="testimonial-author">
+              <strong>فهد الاحمد</strong>
+              <span>شخص عادي</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="stars">
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <p>اسطوري ماشاء الله تبارك الرحمن</p>
+            <div class="testimonial-author">
+              <strong>عبد الله</strong>
+              <span>شخص عادي</span>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="stars">
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <p>ممتتتتتتاااااااااااااااااز</p>
+            <div class="testimonial-author">
+              <strong>معاذ وليد</strong>
+              <span>مبرمج بكل اللغات مبرمج اسطوري + استاذي</span>
+            </div>
+          </div>
+        </div>        
+<div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="stars">
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <p>نتعلم منك يا استاذ</p>
+            <div class="testimonial-author">
+              <strong>احمد الغريب</strong>
+              <span> مبرمج محترف جدًا وخطاط ودكتور </span>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="testimonial-card">
+            <div class="stars">
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+            <p>مبدع كالعادة يا هيثم</p>
+            <div class="testimonial-author">
+              <strong>أحمد زيدان</strong>
+              <span>صاحب بوت سلاح المصمم (تلي)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+    
+       
+  
+</section>
+
+  <!-- Channels -->
+  <section id="clients">
+    <div class="container">
+      <h2 class="section-title reveal">قنواتنا</h2>
+
+      <!-- القناة الرئيسية ثابتة -->
+      <div class="reveal" style="text-align:center; margin-bottom:2.5rem;">
+        <a href="https://t.me/programerks" target="_blank" class="main-channel-card">
+          <span class="main-channel-icon"><i class="fa-brands fa-telegram"></i></span>
+          <span>برمجة هيثم الضناوي</span>
+        </a>
+      </div>
+
+      <!-- القنوات المتحركة -->
+      <div class="swiper reveal" id="channelsSwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide"><a href="https://t.me/IOmarDesign" target="_blank" class="channel-card"><i class="fa-brands fa-telegram"></i> مجمع شيخ الدار التعليمي</a></div>
+          <div class="swiper-slide"><a href="https://t.me/SheikhAlDarFoundry" target="_blank" class="channel-card"><i class="fa-brands fa-telegram"></i> شيخ الدار فاوندري</a></div>
+          <div class="swiper-slide"><a href="https://t.me/ElgharibDesign" target="_blank" class="channel-card"><i class="fa-brands fa-telegram"></i> نقاشات تصميم أحمد الغريب</a></div>
+          <div class="swiper-slide"><a href="https://t.me/ElgharibFonts" target="_blank" class="channel-card"><i class="fa-brands fa-telegram"></i> نقاشات خطوط أحمد الغريب</a></div>
+          <div class="swiper-slide"><a href="https://t.me/bitroMW" target="_blank" class="channel-card"><i class="fa-brands fa-telegram"></i> برمجيات بيترو</a></div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="container">
+      <h2 class="section-title reveal">تواصل معي</h2>
+      <div class="contact-grid">
+        <div class="reveal">
+          
+          <a href="https://t.me/Programerhtmls" class="social-link"><i class="fa-brands fa-telegram"></i> @Programerhtmls</a>
+        </div>
+        <div class="reveal" id="formContainer">
+          
+          <div id="step3">
+            <h3 id="step3Title"></h3>
+            <p id="step3Msg" style="margin-bottom:1rem;"></p>
+            <button class="btn btn-primary" onclick="goToStep1()">العودة للصفحة الرئيسية</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© 2025  هيثم الضناوي. جميع الحقوق محفوظة</p>
+    </div>
+  </footer>
+
+</div>
+</div>
+
+<script src="https://unpkg.com/swiper@11/swiper-bundle.min.js"></script>
+<script src="script.js"></script>
+</body>
 </html>
